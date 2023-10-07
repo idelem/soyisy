@@ -983,6 +983,11 @@
                 return n.toString(2).padStart(6, '0');
             }
 
+            function stob (s)
+            {
+                return parseInt(s, 2);
+            }
+
             function bian_yao (x1, x2, n)
             {
                 if (n > 5) return false;
@@ -1016,13 +1021,29 @@
                 <a href="#" id="delete">删除</a>
             </div>
         </template>
+        <input type="text" id="input" placeholder="输入卦名或编号">
         <a href="#" id="new" onclick="qi(); return false;">起卦</a>
         <script>
             const template = document.querySelector("#gua");
 
             function qi ()
             {
+                var xiang = 0b000000;
+                var input = document.getElementById("input").value;
+                if (/^\d+$/.test(input))
+                {
+                    var id = parseInt(input);
+                    id -= 1;
+                    if (id >= 0 && id < 64)
+                        xiang = stob(data.gua[id]["gua-xiang"]);
+                }
+                else {
+                    var gua = data.gua.find(x => x["gua-name"] == input);
+                    if (gua)
+                        xiang = stob(gua["gua-xiang"]);
+                }
                 var node = new Gua();
+                node.xiang = xiang;
                 node.init();
                 gua.push(node);
             }
