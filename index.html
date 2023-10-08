@@ -7,8 +7,8 @@
             :root {
                 --yang: #cccccc;
                 --yin: #282828;
-                --yao-w: 6rem;
-                --yao-h: 1rem;
+                --yao-w: 8rem;
+                --yao-h: 1.2rem;
                 --yao-m: 0.5rem;
                 --hui: #aaaaaa;
                 --bian: #741148;
@@ -22,14 +22,20 @@
                 background: var(--yang);
                 color: var(--yin);
                 position: relative;
-                font-family: "Noto Sans Serif", "Microsoft YaHei", "inconsolata", sans-serif;
+                font-family: "Noto Sans Serif SC", "Microsoft YaHei", "inconsolata", sans-serif;
+                font-size: 14px;
             }
             .gua {
                 border: 1px solid var(--hui);
-                padding: 1rem;
+                padding: 1em;
                 display: flex;
                 flex-direction: row;
                 position: relative;
+                width: 60%;
+                margin: auto;
+                margin-top: 1em;
+                margin-bottom: 1em;
+                align-items: center;
             }
             .yao {
                 width: var(--yao-w);
@@ -56,7 +62,10 @@
             .xiang {
                 display: flex;
                 flex-direction: column;
-                width: var(--yao-w);
+                flex-grow: 1;
+                flex-shrink: 1;
+                width: 30%;
+                align-items: center;
             }
             #yao-detail {
                 display: flex;
@@ -66,7 +75,7 @@
                 opacity: 50%;
             }
             .data {
-                padding: 0 1rem;
+                padding: 0 1em;
                 flex-grow: 1;
                 flex-shrink: 1;
                 width: 30%;
@@ -75,6 +84,74 @@
                 position: absolute;
                 right: 0;
                 top: 0;
+                padding: 2px 7px;
+            }
+            .nav a {
+                text-decoration: none;
+                color: var(--yin);
+                opacity: 0.5;
+                font-size: 12px;
+            }
+            .nav a :visited {
+                color: var(--yin);
+            }
+
+            #top {
+                position: sticky;
+                top: 0;
+                height: 2em;
+                background-color: var(--yang);
+                z-index: 999;
+                margin: auto;
+                padding: 1em 0;
+            }
+
+            #top-container {
+                width: 60%;
+                position: relative;
+                margin: auto;
+            }
+
+            #top input {
+                background-color: var(--yang);
+                border: none;
+                border-bottom: 1px solid var(--hui);
+                width: 20em;
+                margin: auto;
+            }
+
+            #top a {
+                cursor: pointer;
+                position: absolute;
+                right: 0;
+            }
+
+            @media only screen and (max-width: 768px) {
+                :root {
+                    --yao-w: 36vw;
+                    --yao-h: 5vw;
+                    --yao-m: 2vw;
+                }
+                body {
+                }
+                .gua {
+                    width: calc(100vw - 4em);
+                    flex-direction: column;
+                }
+                .xiang {
+                    width: var(--yao-w);
+                    margin: auto;
+                    padding: 1em 0;
+                }
+                .data {
+                    width: 100%;
+                    margin: 1em 0;
+                }
+                #top {
+                    width: auto;
+                    margin: 0;
+                    padding: 1em;
+                }
             }
         </style>
     </head>
@@ -925,6 +1002,12 @@
 
                     var self_el = this.el.querySelector("#self");
                     this.update_data(this.xiang, this.id, self_el);
+
+                    if (this.parent_id != -1)
+                    {
+                        var parent_el = this.el.querySelector("#parent");
+                        this.update_data(this.parent_xiang, this.parent_id, parent_el);
+                    }
                 }
 
                 this.update_id = function ()
@@ -1019,12 +1102,16 @@
                 <div id="yao-detail"></div>
             </div>
             <div class="nav">
-                <a href="#" id="copy">复制</a>
-                <a href="#" id="delete">删除</a>
+                <a href="#" id="copy">COPY</a>
+                <a href="#" id="delete">X</a>
             </div>
         </template>
-        <input type="text" id="input" placeholder="输入卦名或编号">
-        <a id="new" onclick="qi(); return false;">起卦</a>
+        <div id="top">
+            <div id="top-container">
+                <input type="text" id="input" placeholder="输入卦名或编号">
+                <a id="new" onclick="qi(); return false;">起卦</a>
+            </div>
+        </div>
         <script>
             const template = document.querySelector("#gua");
 
@@ -1040,9 +1127,9 @@
                         xiang = stob(data.gua[id]["gua-xiang"]);
                 }
                 else {
-                    var gua = data.gua.find(x => x["gua-name"] == input);
-                    if (gua)
-                        xiang = stob(gua["gua-xiang"]);
+                    var g = data.gua.find(x => x["gua-name"] == input);
+                    if (g)
+                        xiang = stob(g["gua-xiang"]);
                 }
                 var node = new Gua();
                 node.xiang = xiang;
